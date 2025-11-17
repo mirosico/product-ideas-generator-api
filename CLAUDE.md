@@ -58,44 +58,53 @@ The project uses Node.js + TypeScript with ES6 modules.
 
 ## Architecture Considerations
 
-### Project Structure (DDD - Domain-Centric)
+### Project Structure (Domain-Oriented)
 
-Organized by bounded contexts, each domain contains all its layers:
+Code is grouped by business domain, with each domain containing its own routes, controllers, services, and models:
 
 ```
 /src
   /users
-    /domain            - User entity, value objects
-    /application       - User use cases (RegisterUser, LoginUser)
-    /infrastructure    - Supabase auth integration, user repository
-    /presentation      - Auth routes, controllers, middleware
+    users.routes.ts       - User API routes
+    users.controller.ts   - Request/response handlers
+    users.service.ts      - Business logic
+    users.model.ts        - User entity/types
+
+  /auth
+    auth.routes.ts        - Authentication routes
+    auth.controller.ts    - Auth handlers
+    auth.service.ts       - Supabase auth integration
 
   /product-ideas
-    /domain            - ProductIdea entity, Score value object, scoring domain service
-    /application       - Use cases (GenerateIdeas, GetIdeasFeed, ScoreIdea)
-    /infrastructure    - Product ideas repository, LLM service integration
-    /presentation      - Ideas API routes, controllers, DTOs
+    ideas.routes.ts       - Product ideas API routes
+    ideas.controller.ts   - Ideas request handlers
+    ideas.service.ts      - Idea generation & scoring logic
+    ideas.model.ts        - ProductIdea entity/types
 
   /subscriptions
-    /domain            - Subscription entity, Topic value objects
-    /application       - Use cases (SubscribeUser, UpdatePreferences, Unsubscribe)
-    /infrastructure    - Subscriptions repository, email service integration
-    /presentation      - Subscription routes, controllers
+    subscriptions.routes.ts     - Subscription API routes
+    subscriptions.controller.ts - Subscription handlers
+    subscriptions.service.ts    - Email subscription logic
+    subscriptions.model.ts      - Subscription entity/types
 
-  /reddit-sources
-    /domain            - RedditSource entity, engagement metrics value objects
-    /application       - Use cases (CollectSources, ExtractSignals)
-    /infrastructure    - Reddit API client, source repository, caching
-    /presentation      - Admin routes for source management (if needed)
+  /reddit
+    reddit.service.ts     - Reddit API client
+    reddit.types.ts       - Reddit data types
+    reddit.cache.ts       - Caching layer
 
   /shared
-    /domain            - Shared value objects (Email, Id, DateRange)
-    /infrastructure
-      /queue           - Bull job definitions and processors
-      /config          - Environment config, LLM prompts, constants
-      /database        - Supabase client, migrations
-    /presentation
-      /middleware      - Shared middleware (error handling, logging)
+    /config
+      env.ts              - Environment configuration
+      prompts.ts          - Claude LLM prompts
+    /queue
+      jobs.ts             - Bull job definitions
+      processors.ts       - Job processors
+    /middleware
+      auth.middleware.ts  - Authentication middleware
+      error.middleware.ts - Error handling
+    /utils
+      database.ts         - Supabase client
+      logger.ts           - Logging utilities
 ```
 
 ### Database Schema (Supabase Postgres)

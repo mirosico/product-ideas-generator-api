@@ -17,11 +17,12 @@
 
 ## Architecture & Code Standards
 
-### DDD Structure
-- Follow domain-centric architecture (not layer-centric)
-- Each domain module contains: /domain, /application, /infrastructure, /presentation
-- Shared concerns go in /shared
+### Domain-Oriented Structure
+- Group code by business domain (users/, auth/, product-ideas/, etc.)
+- Each domain contains: routes, controller, service, model files
+- Shared concerns go in /shared (config, queue, middleware, utils)
 - Keep domains independent and loosely coupled
+- Flat structure within each domain - no deep nesting
 
 ### TypeScript Standards
 - Use ES6 modules (import/export)

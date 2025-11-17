@@ -14,8 +14,8 @@ ok, now create PROMPTS.md and since now copy every promt I give you there. Also 
 ```
 
 **Result**:
-- Created .cursor/PROMPTS.md to track all development prompts
-- Created .cursor/rules.md with auto-commit and no-permission rules
+- Created .claude/PROMPTS.md to track all development prompts
+- Created .claude/rules.md with auto-commit and no-permission rules
 - Established workflow for tracking prompts and committing changes
 
 ---
@@ -33,5 +33,37 @@ It should not be cursor rules! its for you claude code! ALso allow you to edit/c
 - Updated rules.md header from "Cursor AI Rules" to "Claude Code Rules"
 - Added explicit permissions: allowed to edit/create ANY files and run ANY commands
 - Clarified that permission asking is not required
+
+---
+
+## Prompt 3: Simplify to Domain-Oriented Structure
+**Date**: 2025-11-17
+**Context**: Simplifying architecture from layered DDD to flat domain-oriented
+
+**Prompt**:
+```
+Update architecture description to smthing simillar to Domain-Driven (or Domain-Oriented) Folder Structure
+
+You group code by business domain (e.g., users/, auth/, orders/), and each domain contains its own routes, controllers, services, models, etc.
+
+Structure example:
+
+/users
+  users.routes.ts
+  users.controller.ts
+  users.service.ts
+  users.model.ts
+
+/auth
+  auth.routes.ts
+  auth.controller.ts
+  auth.service.ts
+```
+
+**Result**:
+- Updated CLAUDE.md with simplified Domain-Oriented structure
+- Each domain now has flat structure: routes, controller, service, model files
+- Updated rules.md to reflect Domain-Oriented approach instead of layered DDD
+- Removed deep nesting (/domain, /application, /infrastructure layers)
 
 ---
