@@ -67,3 +67,24 @@ Structure example:
 - Removed deep nesting (/domain, /application, /infrastructure layers)
 
 ---
+
+## Prompt 4: Install Dependencies
+**Date**: 2025-11-17
+**Context**: Setting up project dependencies
+
+**Prompt**:
+```
+now add all needed npm packages and install all needed dependepcies
+```
+
+**Result**:
+- Updated package.json with all required dependencies:
+  - Runtime: Express, Supabase client, Anthropic SDK, SendGrid, Bull, ioredis, snoowrap, zod, dotenv
+  - Dev: TypeScript, tsx, nodemon, type definitions
+- Changed type to "module" for ES6 modules
+- Added scripts: dev (nodemon + tsx), build (tsc), start
+- Created tsconfig.json with strict TypeScript configuration
+- Created .gitignore for node_modules, dist, .env, IDE files
+- Installed all 232 packages successfully
+
+---
