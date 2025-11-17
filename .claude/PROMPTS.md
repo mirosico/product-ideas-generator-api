@@ -410,3 +410,43 @@ Add ability to enable/disable sources
 - Comprehensive logging of all operations
 
 ---
+## Prompt 16: Create Comprehensive README
+**Date**: 2025-11-17
+**Context**: Complete local setup documentation from scratch
+
+**Prompt**:
+```
+No, create readme file, with basic information about project and with commands how to run server locally from scratch
+```
+
+**Result**:
+- Created comprehensive README.md (440+ lines) with complete setup guide:
+  - Project overview with feature list and emoji icons
+  - Complete tech stack breakdown
+  - Domain-oriented architecture description
+  - Prerequisites (Node.js 18+, Redis, Supabase, API keys)
+  - Step-by-step installation instructions from scratch:
+    1. Clone repository
+    2. Install dependencies with npm
+    3. Environment variables setup (.env.example → .env)
+    4. Redis setup (Docker/Homebrew/apt options)
+    5. Database setup (Supabase CLI and Dashboard options)
+    6. Admin API key generation
+  - Running the server (dev with hot reload, production mode)
+  - Verification steps (health check, Redis connection, auth test)
+  - Complete API endpoint reference:
+    - Public endpoints (health, auth, ideas)
+    - Protected endpoints (logout, subscriptions)
+    - Admin endpoints (job management, Reddit sources)
+  - Testing pipeline walkthrough (5 steps from Reddit collection to email send)
+  - Background jobs explanation (scheduling and triggers)
+  - Available npm scripts reference
+  - Complete project structure tree
+  - Troubleshooting section (Redis, Supabase, TypeScript, port conflicts)
+  - Environment variables reference table with descriptions
+  - License and support information
+- Includes curl examples for testing all endpoints
+- Cross-references to ARCHITECTURE.md, DATABASE.md, ADMIN.md, TODO.md
+- Ready for onboarding new developers
+
+---
