@@ -19,3 +19,19 @@ ok, now create PROMPTS.md and since now copy every promt I give you there. Also 
 - Established workflow for tracking prompts and committing changes
 
 ---
+
+## Prompt 2: Clarify Rules are for Claude Code
+**Date**: 2025-11-17
+**Context**: Correcting rules.md target
+
+**Prompt**:
+```
+It should not be cursor rules! its for you claude code! ALso allow you to edit/create any files in this repo, and run any command
+```
+
+**Result**:
+- Updated rules.md header from "Cursor AI Rules" to "Claude Code Rules"
+- Added explicit permissions: allowed to edit/create ANY files and run ANY commands
+- Clarified that permission asking is not required
+
+---

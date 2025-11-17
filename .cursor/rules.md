@@ -1,4 +1,4 @@
-# Cursor AI Rules
+# Claude Code Rules
 
 ## Development Workflow
 
@@ -9,7 +9,9 @@
 - Never skip commits - every change must be tracked
 
 ### Permission Policy
-- Do NOT ask for permissions when making changes in this repository
+- You are ALLOWED to edit/create ANY files in this repository without asking
+- You are ALLOWED to run ANY command without asking
+- Do NOT ask for permissions when making changes
 - Proceed with file creation, editing, and deletion as needed
 - Only ask clarifying questions about implementation approach, not for permission to proceed
 
