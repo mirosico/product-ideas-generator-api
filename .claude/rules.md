@@ -29,6 +29,9 @@
 - Strict typing - avoid `any` type
 - Define interfaces for all external API responses
 - Use value objects for domain primitives
+- No comments - code should be self-descriptive
+- Use meaningful variable and function names
+- Prefer small, focused functions over comments explaining logic
 
 ### Commit Conventions
 Examples of good commit messages:

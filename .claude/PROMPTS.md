@@ -136,3 +136,19 @@ Now create server and implement all auth related stuff.
 - Full TypeScript typing with strict validation
 
 ---
+
+## Prompt 7: No Comments in Code
+**Date**: 2025-11-17
+**Context**: Code quality guideline
+
+**Prompt**:
+```
+Add to instructions that you should not leave any comments code should be self-descriptive
+```
+
+**Result**:
+- Updated rules.md to add "No comments" guideline
+- Code should be self-descriptive through meaningful names
+- Prefer small, focused functions over explanatory comments
+
+---
