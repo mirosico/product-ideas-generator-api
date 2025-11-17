@@ -3,6 +3,8 @@ import { env } from './shared/config/env.js';
 import { logger } from './shared/utils/logger.js';
 import { errorHandler } from './shared/middleware/error.middleware.js';
 import authRoutes from './auth/auth.routes.js';
+import './shared/queue/processors.js';
+import { scheduleRedditCollection } from './shared/queue/jobs.js';
 
 const app = express();
 
@@ -25,7 +27,7 @@ app.use((req, res, next) => {
 });
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
@@ -33,7 +35,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 
 // 404 handler
-app.use((req, res) => {
+app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
@@ -43,11 +45,14 @@ app.use(errorHandler);
 // Start server
 const PORT = parseInt(env.PORT, 10);
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   logger.info(`Server running on port ${PORT}`, {
     env: env.NODE_ENV,
     port: PORT,
   });
+
+  await scheduleRedditCollection();
+  logger.info('Background jobs scheduled');
 });
 
 export default app;

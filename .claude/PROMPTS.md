@@ -152,3 +152,34 @@ Add to instructions that you should not leave any comments code should be self-d
 - Prefer small, focused functions over explanatory comments
 
 ---
+
+## Prompt 8: Implement Reddit Data Collection Flow
+**Date**: 2025-11-17
+**Context**: Reddit data collection with Bull queue system
+
+**Prompt**:
+```
+Great! Now implement Reddit Data Collection Flow
+```
+
+**Result**:
+- Created reddit domain:
+  - reddit.types.ts: TypeScript types and Zod schemas for posts/comments
+  - reddit.cache.ts: Redis caching layer with error handling
+  - reddit.service.ts: Reddit API client using snoowrap with rate limiting
+- Implemented Bull queue infrastructure:
+  - shared/queue/jobs.ts: Queue definitions (reddit:collect, ideas:generate, email:send)
+  - shared/queue/processors.ts: Job processors with error handling and logging
+- Features implemented:
+  - Fetch popular subreddits from database or use defaults
+  - Collect hot posts with rate limiting (60 req/min)
+  - Fetch top comments for each post
+  - Store posts in database (reddit_posts table)
+  - Redis caching to avoid duplicate fetches (30min TTL)
+  - Update source metadata (last_fetched_at, post_count)
+  - Scheduled cron job (every 6 hours)
+  - Trigger ideas:generate job after collection
+  - Exponential backoff retry logic
+- Integrated queue processors into main server startup
+
+---
