@@ -379,3 +379,34 @@ Add basic admin authentication/protection
   - Error responses
 
 ---
+
+## Prompt 15: Implement Reddit Source Configuration
+**Date**: 2025-11-17
+**Context**: Admin endpoints for managing tracked subreddits
+
+**Prompt**:
+```
+Great, now implement: 6. Reddit Configuration
+Add endpoint to manage reddit_sources (add/remove subreddits)
+Add subreddit category configuration
+Add ability to enable/disable sources
+```
+
+**Result**:
+- Created reddit-sources.controller.ts with full CRUD operations
+- Reddit source management endpoints (6 total):
+  - GET /api/admin/reddit-sources - List all sources with filtering (isActive, category)
+  - POST /api/admin/reddit-sources - Create new source (prevents duplicates with 409 error)
+  - PATCH /api/admin/reddit-sources/:id - Update category or enable/disable
+  - DELETE /api/admin/reddit-sources/:id - Remove source
+  - GET /api/admin/reddit-sources/stats - Aggregate statistics (total, active, by category, engagement)
+  - POST /api/admin/reddit-sources/bulk-update - Enable/disable multiple sources at once
+- Input validation with Zod schemas
+- Duplicate prevention on creation
+- Statistics include: total/active/inactive counts, breakdown by category, total posts, avg engagement, last fetch time
+- All endpoints protected by admin middleware
+- Updated ADMIN.md with complete Reddit source management documentation
+- Full error handling (404, 409, 500)
+- Comprehensive logging of all operations
+
+---

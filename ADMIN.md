@@ -293,6 +293,224 @@ curl -X POST http://localhost:3000/api/admin/jobs/send-emails \
 }
 ```
 
+## Reddit Source Management
+
+### List Reddit Sources
+
+Get all tracked subreddit sources with optional filtering.
+
+```http
+GET /api/admin/reddit-sources
+```
+
+**Query Parameters:**
+- `isActive` (optional): Filter by active status (`true` or `false`)
+- `category` (optional): Filter by category
+
+**Response (200):**
+```json
+{
+  "sources": [
+    {
+      "id": "uuid",
+      "subredditName": "SaaS",
+      "category": "devtools",
+      "isActive": true,
+      "postCount": 125,
+      "avgEngagement": 45.5,
+      "lastFetchedAt": "2024-01-15T10:30:00Z",
+      "createdAt": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "count": 1
+}
+```
+
+**Example:**
+```bash
+curl http://localhost:3000/api/admin/reddit-sources?isActive=true \
+  -H "X-Admin-API-Key: your-key"
+```
+
+### Create Reddit Source
+
+Add a new subreddit to track.
+
+```http
+POST /api/admin/reddit-sources
+```
+
+**Request Body:**
+```json
+{
+  "subredditName": "webdev",
+  "category": "devtools"
+}
+```
+
+**Response (201):**
+```json
+{
+  "id": "uuid",
+  "subredditName": "webdev",
+  "category": "devtools",
+  "isActive": true,
+  "postCount": 0,
+  "avgEngagement": 0,
+  "lastFetchedAt": null,
+  "createdAt": "2024-01-15T10:30:00Z"
+}
+```
+
+**Error (409):**
+```json
+{
+  "error": "Subreddit already exists"
+}
+```
+
+**Example:**
+```bash
+curl -X POST http://localhost:3000/api/admin/reddit-sources \
+  -H "X-Admin-API-Key: your-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "subredditName": "webdev",
+    "category": "devtools"
+  }'
+```
+
+### Update Reddit Source
+
+Update source category or enable/disable tracking.
+
+```http
+PATCH /api/admin/reddit-sources/:id
+```
+
+**Request Body:**
+```json
+{
+  "category": "productivity",
+  "isActive": false
+}
+```
+
+**Parameters:**
+- `category` (optional): Update category
+- `isActive` (optional): Enable/disable source
+
+**Response (200):**
+```json
+{
+  "id": "uuid",
+  "subredditName": "SaaS",
+  "category": "productivity",
+  "isActive": false,
+  "postCount": 125,
+  "avgEngagement": 45.5,
+  "lastFetchedAt": "2024-01-15T10:30:00Z",
+  "createdAt": "2024-01-01T00:00:00Z"
+}
+```
+
+**Example:**
+```bash
+curl -X PATCH http://localhost:3000/api/admin/reddit-sources/uuid-here \
+  -H "X-Admin-API-Key: your-key" \
+  -H "Content-Type: application/json" \
+  -d '{"isActive": false}'
+```
+
+### Delete Reddit Source
+
+Remove a subreddit from tracking.
+
+```http
+DELETE /api/admin/reddit-sources/:id
+```
+
+**Response (200):**
+```json
+{
+  "message": "Source deleted successfully",
+  "subredditName": "SaaS"
+}
+```
+
+**Example:**
+```bash
+curl -X DELETE http://localhost:3000/api/admin/reddit-sources/uuid-here \
+  -H "X-Admin-API-Key: your-key"
+```
+
+### Get Source Statistics
+
+Get aggregate statistics for all sources.
+
+```http
+GET /api/admin/reddit-sources/stats
+```
+
+**Response (200):**
+```json
+{
+  "total": 10,
+  "active": 8,
+  "inactive": 2,
+  "byCategory": {
+    "devtools": 4,
+    "business": 3,
+    "productivity": 2,
+    "finance": 1
+  },
+  "totalPosts": 1250,
+  "avgEngagement": 42.3,
+  "lastFetched": "2024-01-15T10:30:00Z"
+}
+```
+
+**Example:**
+```bash
+curl http://localhost:3000/api/admin/reddit-sources/stats \
+  -H "X-Admin-API-Key: your-key"
+```
+
+### Bulk Update Status
+
+Enable or disable multiple sources at once.
+
+```http
+POST /api/admin/reddit-sources/bulk-update
+```
+
+**Request Body:**
+```json
+{
+  "sourceIds": ["uuid1", "uuid2", "uuid3"],
+  "isActive": false
+}
+```
+
+**Response (200):**
+```json
+{
+  "message": "3 sources updated",
+  "updatedCount": 3
+}
+```
+
+**Example:**
+```bash
+curl -X POST http://localhost:3000/api/admin/reddit-sources/bulk-update \
+  -H "X-Admin-API-Key: your-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sourceIds": ["uuid1", "uuid2"],
+    "isActive": false
+  }'
+```
+
 ## Security Best Practices
 
 1. **Generate Strong Keys:**
