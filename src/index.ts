@@ -5,6 +5,7 @@ import { errorHandler } from './shared/middleware/error.middleware.js';
 import authRoutes from './auth/auth.routes.js';
 import ideasRoutes from './product-ideas/ideas.routes.js';
 import subscriptionsRoutes from './subscriptions/subscriptions.routes.js';
+import adminRoutes from './admin/admin.routes.js';
 import './shared/queue/processors.js';
 import { scheduleRedditCollection } from './shared/queue/jobs.js';
 
@@ -37,6 +38,7 @@ app.get('/health', (_req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/ideas', ideasRoutes);
 app.use('/api/subscriptions', subscriptionsRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 404 handler
 app.use((_req, res) => {

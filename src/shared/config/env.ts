@@ -24,6 +24,9 @@ const envSchema = z.object({
 
   // Redis
   REDIS_URL: z.string().url(),
+
+  // Admin
+  ADMIN_API_KEY: z.string().min(32).optional(),
 });
 
 function validateEnv() {

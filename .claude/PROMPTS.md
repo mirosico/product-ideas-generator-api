@@ -339,3 +339,43 @@ Great, now create  Database Setup
 - Auto-update trigger for subscriptions.updated_at
 
 ---
+
+## Prompt 14: Create Manual Job Triggers
+**Date**: 2025-11-17
+**Context**: Admin endpoints for testing and job management
+
+**Prompt**:
+```
+great, now create . Manual Job Triggers (Testing)
+Add admin endpoints to manually trigger jobs:
+POST /api/admin/jobs/reddit-collect
+POST /api/admin/jobs/generate-ideas
+POST /api/admin/jobs/send-emails
+Add basic admin authentication/protection
+```
+
+**Result**:
+- Created admin domain (admin.controller.ts, admin.routes.ts)
+- Implemented admin middleware with API key authentication:
+  - X-Admin-API-Key header required
+  - Minimum 32 character key enforced
+  - Logging of access attempts and failures
+- Admin endpoints implemented:
+  - POST /api/admin/jobs/reddit-collect - Trigger Reddit collection (optional subreddits, triggerIdeasGeneration)
+  - POST /api/admin/jobs/generate-ideas - Trigger AI idea generation (configurable batchSize)
+  - POST /api/admin/jobs/send-emails - Trigger email notifications (optional filters)
+  - GET /api/admin/jobs/:jobId?queue=name - Get job status and progress
+  - GET /api/admin/queue-stats - Get statistics for all queues
+- All endpoints return 202 Accepted with job ID for async tracking
+- Job status endpoint provides: state, progress, result, timestamps
+- Queue stats endpoint provides: waiting, active, completed, failed, delayed counts
+- Added ADMIN_API_KEY to env config (optional, min 32 chars)
+- Updated .env.example with admin key placeholder
+- Created ADMIN.md comprehensive documentation:
+  - Authentication guide
+  - All endpoint specifications with examples
+  - Testing workflow
+  - Security best practices (key generation, rotation, HTTPS)
+  - Error responses
+
+---
