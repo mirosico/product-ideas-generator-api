@@ -7,6 +7,8 @@
 - Commit messages must be short, clear, and self-descriptive
 - Use conventional commit format when appropriate (feat:, fix:, docs:, refactor:, etc.)
 - Never skip commits - every change must be tracked
+- ALWAYS validate TypeScript compilation (`npx tsc --noEmit`) before committing
+- Fix all TypeScript errors before creating a commit
 
 ### Permission Policy
 - You are ALLOWED to edit/create ANY files in this repository without asking

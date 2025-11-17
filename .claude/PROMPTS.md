@@ -183,3 +183,24 @@ Great! Now implement Reddit Data Collection Flow
 - Integrated queue processors into main server startup
 
 ---
+
+## Prompt 9: Fix TypeScript Errors and Add Validation Rule
+**Date**: 2025-11-17
+**Context**: Fix compilation errors and enforce TypeScript validation
+
+**Prompt**:
+```
+There are ts errors in reddit.service.ts. Fix them and add to rules that you need to validate ts before each commit.
+```
+
+**Result**:
+- Fixed TypeScript errors in reddit.service.ts:
+  - Resolved snoowrap circular type references by chaining method calls
+  - Used type assertions (as any[]) to work around snoowrap's type issues
+  - Fixed unused parameter in error.middleware.ts
+- Updated rules.md with TypeScript validation requirement:
+  - ALWAYS run `npx tsc --noEmit` before committing
+  - Fix all TypeScript errors before creating commits
+- All TypeScript compilation errors resolved
+
+---

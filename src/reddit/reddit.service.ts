@@ -89,20 +89,24 @@ class RedditService {
 
   private async fetchRecentPosts(subredditName: string): Promise<RedditPost[]> {
     try {
-      const subreddit = await this.client.getSubreddit(subredditName);
-      const submissions = await subreddit.getHot({ limit: this.POSTS_LIMIT });
+      const posts: RedditPost[] = [];
+      const submissions = await this.client.getSubreddit(subredditName).getHot({ limit: this.POSTS_LIMIT }) as any[];
 
-      return submissions.map(post => ({
-        id: post.id,
-        subreddit: subredditName,
-        title: post.title,
-        body: post.selftext || '',
-        author: post.author.name,
-        score: post.score,
-        numComments: post.num_comments,
-        createdAt: post.created_utc,
-        url: post.url,
-      }));
+      for (const post of submissions) {
+        posts.push({
+          id: post.id,
+          subreddit: subredditName,
+          title: post.title,
+          body: post.selftext || '',
+          author: post.author.name,
+          score: post.score,
+          numComments: post.num_comments,
+          createdAt: post.created_utc,
+          url: post.url,
+        });
+      }
+
+      return posts;
     } catch (error) {
       logger.error('Failed to fetch posts', { subreddit: subredditName, error });
       return [];
@@ -110,24 +114,29 @@ class RedditService {
   }
 
   private async fetchPostComments(posts: RedditPost[]): Promise<Array<RedditPost & { comments: RedditComment[] }>> {
-    const postsWithComments = [];
+    const postsWithComments: Array<RedditPost & { comments: RedditComment[] }> = [];
 
     for (const post of posts) {
       try {
-        const submission = await this.client.getSubmission(post.id);
-        const comments = await submission.comments.fetchAll({ limit: this.COMMENTS_LIMIT });
+        const topComments: RedditComment[] = [];
+        const comments = await this.client.getSubmission(post.id).comments.fetchAll() as any[];
 
-        const topComments = comments
-          .filter(c => c.body && c.body !== '[deleted]' && c.body !== '[removed]')
-          .slice(0, this.COMMENTS_LIMIT)
-          .map(comment => ({
-            id: comment.id,
-            postId: post.id,
-            author: comment.author.name,
-            body: comment.body,
-            score: comment.score,
-            createdAt: comment.created_utc,
-          }));
+        for (const comment of comments) {
+          if (comment.body && comment.body !== '[deleted]' && comment.body !== '[removed]') {
+            topComments.push({
+              id: comment.id,
+              postId: post.id,
+              author: comment.author.name,
+              body: comment.body,
+              score: comment.score,
+              createdAt: comment.created_utc,
+            });
+
+            if (topComments.length >= this.COMMENTS_LIMIT) {
+              break;
+            }
+          }
+        }
 
         postsWithComments.push({
           ...post,
