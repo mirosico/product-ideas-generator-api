@@ -4,6 +4,7 @@ import { logger } from './shared/utils/logger.js';
 import { errorHandler } from './shared/middleware/error.middleware.js';
 import authRoutes from './auth/auth.routes.js';
 import ideasRoutes from './product-ideas/ideas.routes.js';
+import subscriptionsRoutes from './subscriptions/subscriptions.routes.js';
 import './shared/queue/processors.js';
 import { scheduleRedditCollection } from './shared/queue/jobs.js';
 
@@ -35,6 +36,7 @@ app.get('/health', (_req, res) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/ideas', ideasRoutes);
+app.use('/api/subscriptions', subscriptionsRoutes);
 
 // 404 handler
 app.use((_req, res) => {

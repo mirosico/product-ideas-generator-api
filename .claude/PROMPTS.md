@@ -241,3 +241,45 @@ Now, implement  Idea Generation Flow
 - Complete data flow: Reddit → Claude AI → Database → API
 
 ---
+
+## Prompt 11: Implement Email Notification Flow
+**Date**: 2025-11-17
+**Context**: SendGrid integration and subscription management
+
+**Prompt**:
+```
+Great, now create Email Notification Flow
+```
+
+**Result**:
+- Created SendGrid email service (shared/services/email.service.ts):
+  - Integration with SendGrid SDK
+  - sendIdeasNotification: Sends HTML/text emails with product ideas
+  - Beautiful HTML email template with idea cards
+  - Unsubscribe link in email footer
+  - Delivery logging to email_logs table
+- Created subscriptions domain:
+  - subscriptions.model.ts: Types, schemas, available topics
+  - subscriptions.service.ts: Subscription CRUD operations
+  - subscriptions.controller.ts: Request handlers
+  - subscriptions.routes.ts: Protected and public routes
+- Features implemented:
+  - Cryptographically secure unsubscribe tokens (32-byte hex)
+  - Automatic upsert on subscription creation (prevents duplicates)
+  - Topic filtering (devtools, health, education, productivity, business, finance, other)
+  - Active/inactive subscription management
+- Updated email:send job processor:
+  - Fetches active subscriptions
+  - Filters new ideas by user topic preferences
+  - Sends top 10 scored ideas per user
+  - Logs delivery status (sent/failed)
+  - Progress tracking
+- API endpoints:
+  - POST /api/subscriptions - Create subscription (protected)
+  - GET /api/subscriptions/me - Get my subscription (protected)
+  - PATCH /api/subscriptions/me - Update topic filters (protected)
+  - DELETE /api/subscriptions/me - Unsubscribe (protected)
+  - GET /api/subscriptions/unsubscribe/:token - Public unsubscribe link
+- Complete notification flow: New ideas → Match filters → SendGrid → Email logs
+
+---

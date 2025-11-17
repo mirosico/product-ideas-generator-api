@@ -64,9 +64,69 @@ ideasGenerateQueue.process(async (job: Job<IdeasGenerateJobData>) => {
 emailSendQueue.process(async (job: Job<EmailSendJobData>) => {
   logger.info('Processing email:send job', { jobId: job.id });
 
-  logger.info('email:send job completed (placeholder)', { jobId: job.id });
+  const { subscriptionsService } = await import('../../subscriptions/subscriptions.service.js');
+  const { emailService } = await import('../services/email.service.js');
+  const { supabase } = await import('../utils/database.js');
 
-  return { sent: 0 };
+  const subscriptions = await subscriptionsService.getActiveSubscriptions();
+
+  if (subscriptions.length === 0) {
+    logger.info('No active subscriptions found');
+    return { sent: 0 };
+  }
+
+  let emailsSent = 0;
+
+  for (const subscription of subscriptions) {
+    try {
+      const { data: newIdeas } = await supabase
+        .from('product_ideas')
+        .select('*')
+        .eq('is_new', true)
+        .in('topic', subscription.topicFilters)
+        .order('score', { ascending: false })
+        .limit(10);
+
+      if (!newIdeas || newIdeas.length === 0) {
+        continue;
+      }
+
+      const ideas = newIdeas.map(idea => ({
+        name: idea.name,
+        pitch: idea.pitch,
+        score: idea.score,
+        topic: idea.topic,
+      }));
+
+      const success = await emailService.sendIdeasNotification(
+        subscription.email,
+        ideas,
+        subscription.unsubscribeToken
+      );
+
+      const status = success ? 'sent' : 'failed';
+      await emailService.logEmailDelivery(
+        subscription.id,
+        newIdeas.map(i => i.id),
+        status
+      );
+
+      if (success) {
+        emailsSent++;
+      }
+
+      await job.progress((emailsSent / subscriptions.length) * 100);
+    } catch (error) {
+      logger.error('Failed to send email to subscriber', {
+        error,
+        subscriptionId: subscription.id,
+      });
+    }
+  }
+
+  logger.info('email:send job completed', { jobId: job.id, emailsSent });
+
+  return { sent: emailsSent };
 });
 
 redditCollectQueue.on('completed', (job, result) => {
