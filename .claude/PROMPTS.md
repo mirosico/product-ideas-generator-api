@@ -283,3 +283,25 @@ Great, now create Email Notification Flow
 - Complete notification flow: New ideas → Match filters → SendGrid → Email logs
 
 ---
+
+## Prompt 12: Plan Remaining Tasks
+**Date**: 2025-11-17
+**Context**: Document what's left to complete the MVP
+
+**Prompt**:
+```
+Graet, now write short plan what is left to do?
+```
+
+**Result**:
+- Created TODO.md with organized task list
+- Categorized into: Critical (MVP Required), Important (Production Ready), Nice to Have
+- Critical tasks:
+  1. Database setup (Supabase migrations, indexes, constraints)
+  2. Documentation (README with setup, env vars, API docs)
+  3. Manual job triggers for testing
+- Important tasks: Rate limiting, error handling, monitoring
+- Nice to have: Testing, deployment configs, additional features
+- Current status summary shows all core flows completed
+
+---
