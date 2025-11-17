@@ -3,6 +3,7 @@ import { env } from './shared/config/env.js';
 import { logger } from './shared/utils/logger.js';
 import { errorHandler } from './shared/middleware/error.middleware.js';
 import authRoutes from './auth/auth.routes.js';
+import ideasRoutes from './product-ideas/ideas.routes.js';
 import './shared/queue/processors.js';
 import { scheduleRedditCollection } from './shared/queue/jobs.js';
 
@@ -33,6 +34,7 @@ app.get('/health', (_req, res) => {
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/ideas', ideasRoutes);
 
 // 404 handler
 app.use((_req, res) => {

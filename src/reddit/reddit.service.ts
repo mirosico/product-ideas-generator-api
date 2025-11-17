@@ -90,7 +90,7 @@ class RedditService {
   private async fetchRecentPosts(subredditName: string): Promise<RedditPost[]> {
     try {
       const posts: RedditPost[] = [];
-      const submissions = await this.client.getSubreddit(subredditName).getHot({ limit: this.POSTS_LIMIT }) as any[];
+      const submissions = await this.client.getSubreddit(subredditName).getHot({ limit: this.POSTS_LIMIT });
 
       for (const post of submissions) {
         posts.push({
@@ -119,7 +119,7 @@ class RedditService {
     for (const post of posts) {
       try {
         const topComments: RedditComment[] = [];
-        const comments = await this.client.getSubmission(post.id).comments.fetchAll() as any[];
+        const comments = this.client.getSubmission(post.id).comments.fetchAll();
 
         for (const comment of comments) {
           if (comment.body && comment.body !== '[deleted]' && comment.body !== '[removed]') {

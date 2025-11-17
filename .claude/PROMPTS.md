@@ -204,3 +204,40 @@ There are ts errors in reddit.service.ts. Fix them and add to rules that you nee
 - All TypeScript compilation errors resolved
 
 ---
+
+## Prompt 10: Implement Idea Generation Flow
+**Date**: 2025-11-17
+**Context**: Claude AI integration for product idea generation and scoring
+
+**Prompt**:
+```
+Now, implement  Idea Generation Flow
+```
+
+**Result**:
+- Created Claude AI service (shared/services/claude.service.ts):
+  - Integration with Anthropic SDK
+  - generateIdeas: Analyzes Reddit data and generates 3-5 product ideas
+  - scoreIdea: Evaluates ideas on 0-100 scale (pain, willingness to pay, market size, competition)
+  - JSON parsing and validation with Zod schemas
+- Created prompts configuration (shared/config/prompts.ts):
+  - Idea generation prompt with structured output format
+  - Scoring prompt with weighted criteria
+- Created product-ideas domain:
+  - ideas.model.ts: TypeScript types and Zod query schemas
+  - ideas.service.ts: Business logic for generating and fetching ideas
+  - ideas.controller.ts: Request handlers for ideas endpoints
+  - ideas.routes.ts: Route definitions
+- Updated ideas:generate job processor:
+  - Fetches unprocessed Reddit posts in batches
+  - Generates ideas using Claude AI
+  - Scores each idea
+  - Stores in product_ideas table with scoring metadata
+  - Marks posts as processed
+  - Triggers email:send job if ideas created
+- API endpoints:
+  - GET /api/ideas - List ideas with filtering (topic, minScore) and pagination
+  - GET /api/ideas/:id - Get single idea details
+- Complete data flow: Reddit → Claude AI → Database → API
+
+---

@@ -46,9 +46,19 @@ redditCollectQueue.process(async (job: Job<RedditCollectJobData>) => {
 ideasGenerateQueue.process(async (job: Job<IdeasGenerateJobData>) => {
   logger.info('Processing ideas:generate job', { jobId: job.id });
 
-  logger.info('ideas:generate job completed (placeholder)', { jobId: job.id });
+  const { batchSize = 50 } = job.data;
 
-  return { generated: 0 };
+  const { ideasService } = await import('../../product-ideas/ideas.service.js');
+  const ideasCreated = await ideasService.generateIdeasFromReddit(batchSize);
+
+  if (ideasCreated > 0) {
+    await emailSendQueue.add({});
+    logger.info('Triggered email:send job', { ideasCreated });
+  }
+
+  logger.info('ideas:generate job completed', { jobId: job.id, ideasCreated });
+
+  return { generated: ideasCreated };
 });
 
 emailSendQueue.process(async (job: Job<EmailSendJobData>) => {
