@@ -42,24 +42,6 @@ class RedditCache {
     }
   }
 
-  async del(key: string): Promise<void> {
-    try {
-      await this.redis.del(key);
-    } catch (error) {
-      logger.error('Cache delete error', { key, error });
-    }
-  }
-
-  async exists(key: string): Promise<boolean> {
-    try {
-      const result = await this.redis.exists(key);
-      return result === 1;
-    } catch (error) {
-      logger.error('Cache exists error', { key, error });
-      return false;
-    }
-  }
-
   getCacheKey(type: string, identifier: string): string {
     return `reddit:${type}:${identifier}`;
   }
