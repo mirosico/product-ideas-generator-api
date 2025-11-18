@@ -416,7 +416,7 @@ Add ability to enable/disable sources
 
 **Prompt**:
 ```
-No, create readme file, with basic information about project and with commands how to run server locally from scratch
+Now, create readme file, with basic information about project and with commands how to run server locally from scratch
 ```
 
 **Result**:
@@ -448,5 +448,112 @@ No, create readme file, with basic information about project and with commands h
 - Includes curl examples for testing all endpoints
 - Cross-references to ARCHITECTURE.md, DATABASE.md, ADMIN.md, TODO.md
 - Ready for onboarding new developers
+
+---
+
+## Prompt 17: Fix Email Confirmation Session Null Issue
+**Date**: 2025-11-18
+**Context**: Registration returning session null due to Supabase email confirmation
+
+**Prompt**:
+```
+Hey, it looks like const { data, error } = await supabase.auth.signUp({...}) return data but session is null there, investigate reason
+```
+
+**Result**:
+- Identified root cause: Supabase has email confirmation enabled by default
+- When email confirmation is enabled, signUp returns user but session is null until email is confirmed
+- Updated AuthResponse interface to make session optional (can be null)
+- Added optional message field for user feedback
+- Modified register() in auth.service.ts to handle email confirmation gracefully:
+  - Returns { user, session: null, message: "Please check your email..." } when confirmation required
+  - Returns normal { user, session } when confirmation is disabled
+- Added comprehensive documentation to README.md:
+  - New section "Configure Supabase Authentication" with two options:
+    - Option A: Disable email confirmation (for development)
+    - Option B: Keep enabled (for production) with workflow explanation
+  - Added troubleshooting section for "Registration Returns Session Null"
+  - Step-by-step instructions to disable in Supabase Dashboard
+- API now properly handles both email confirmation enabled/disabled scenarios
+
+---
+
+## Prompt 18: Fix Remote Build TypeScript Errors
+**Date**: 2025-11-18
+**Context**: Production build failing with TS7016 errors about missing @types
+
+**Prompt**:
+```
+Having such issues during remote build. Investigate errors: src/admin/admin.controller.ts(1,49): error TS7016: Could not find a declaration file for module 'express'...
+```
+
+**Result**:
+- Identified issue: TypeScript type definitions in devDependencies
+- Remote build servers often skip devDependencies to reduce bundle size
+- TypeScript compilation needs these types during build process
+- Moved build-required packages from devDependencies to dependencies:
+  - @types/express
+  - @types/node  
+  - @types/bull
+  - typescript
+- Kept only development tools in devDependencies:
+  - nodemon (dev server)
+  - tsx (TypeScript executor)
+- Verified local build: `npm run build` successful
+- Verified TypeScript validation: `npx tsc --noEmit` passes
+- Remote builds now have access to required type definitions
+
+---
+
+## Prompt 19: Fix RLS Policy Violation for Subscriptions
+**Date**: 2025-11-18
+**Context**: Subscription creation failing with RLS policy error
+
+**Prompt**:
+```
+When I try to create email subscription getting this error: {"timestamp":"2025-11-18T18:15:39.618Z","level":"error","message":"Failed to create subscription","meta":{"error":{"code":"42501","details":null,"hint":null,"message":"new row violates row-level security policy for table \"subscriptions\""},"userId":"2ee0a402-179d-4510-86a6-e6d79b86f248"}}
+  - Investigate what are the reasons
+```
+
+**Result**:
+- Root cause: Using global Supabase client (anon key) without user authentication context
+- RLS policy checks `auth.uid() = user_id`, but auth.uid() was null
+- Created comprehensive fix:
+  1. Added createAuthenticatedClient() helper in database.ts:
+     - Creates Supabase client with user's JWT token in Authorization header
+     - Properly passes authentication context to RLS engine
+  2. Updated AuthRequest interface to include accessToken field
+  3. Modified auth middleware to extract and store JWT token in req.accessToken
+  4. Updated subscriptions service methods to accept accessToken parameter:
+     - createSubscription, getSubscription, updateSubscription, deleteSubscription
+     - Each method now creates authenticated client before database operations
+  5. Updated subscriptions controller to pass req.accessToken to service methods
+- Now Supabase properly evaluates `auth.uid()` from JWT token
+- RLS policies pass correctly for authenticated requests
+- Subscription creation, reading, updating, and deleting all work properly
+
+---
+
+## Prompt 20: Fix Subscription Delete Not Working
+**Date**: 2025-11-18
+**Context**: Deleted subscriptions still showing on frontend
+
+**Prompt**:
+```
+Looks like deleteMySubscription doesn't work. After deleting I still see subsciptions on FE. Investigate why
+```
+
+**Result**:
+- Issue identified: Soft delete implementation inconsistency
+- deleteSubscription correctly sets `is_active: false` in database
+- But getSubscription was not filtering by is_active status
+- Frontend GET request returned inactive subscriptions, so they still displayed
+- Fix: Added `.eq('is_active', true)` filter to getSubscription query
+- Now behavior is consistent:
+  - DELETE sets is_active to false
+  - GET returns only active subscriptions (is_active = true)
+  - GET returns 404 for inactive/deleted subscriptions
+  - Frontend properly removes subscription from UI
+- Maintains soft delete pattern for audit trail while properly hiding deleted subscriptions
 
 ---
