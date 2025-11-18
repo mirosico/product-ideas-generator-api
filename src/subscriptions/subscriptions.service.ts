@@ -46,6 +46,7 @@ class SubscriptionsService {
       .from('subscriptions')
       .select('*')
       .eq('user_id', userId)
+      .eq('is_active', true)
       .single();
 
     if (error || !data) {
