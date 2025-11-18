@@ -29,11 +29,7 @@ export function errorHandler(
   // Handle Zod validation errors
   if (err instanceof ZodError) {
     res.status(400).json({
-      error: 'Validation error',
-      details: err.errors.map((e) => ({
-        path: e.path.join('.'),
-        message: e.message,
-      })),
+      error: `Validation error: ${err.errors.map((e) => e.message).join(',')}`,
     });
     return;
   }
