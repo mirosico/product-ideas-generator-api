@@ -101,7 +101,6 @@ emailSendQueue.process(async (job: Job<EmailSendJobData>) => {
       const success = await emailService.sendIdeasNotification(
         subscription.email,
         ideas,
-        subscription.unsubscribeToken
       );
 
       const status = success ? 'sent' : 'failed';
