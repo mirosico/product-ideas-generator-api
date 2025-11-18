@@ -41,6 +41,7 @@ export class AuthController {
   async me(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const token = req.headers.authorization?.substring(7);
+      console.log("token", token, req.headers.authorization);
       if (!token) {
         res.status(401).json({ error: 'No token provided' });
         return;

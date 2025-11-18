@@ -7,6 +7,7 @@ export interface AuthRequest extends Request {
     id: string;
     email: string;
   };
+  accessToken?: string;
 }
 
 export async function authMiddleware(
@@ -36,6 +37,7 @@ export async function authMiddleware(
       id: data.user.id,
       email: data.user.email!,
     };
+    req.accessToken = token;
 
     next();
   } catch (error) {

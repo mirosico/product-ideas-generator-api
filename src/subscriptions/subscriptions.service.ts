@@ -1,28 +1,24 @@
-import { supabase } from '../shared/utils/database.js';
+import { supabase, createAuthenticatedClient } from '../shared/utils/database.js';
 import { logger } from '../shared/utils/logger.js';
 import { CreateSubscriptionDto, UpdateSubscriptionDto, Subscription } from './subscriptions.model.js';
 import { randomBytes } from 'crypto';
 
 class SubscriptionsService {
-  async createSubscription(userId: string, dto: CreateSubscriptionDto): Promise<Subscription> {
+  async createSubscription(userId: string, dto: CreateSubscriptionDto, accessToken: string): Promise<Subscription> {
     const unsubscribeToken = this.generateUnsubscribeToken();
+    const client = createAuthenticatedClient(accessToken);
 
-    const { data: existingUser } = await supabase.auth.admin.getUserById(userId);
-    if (!existingUser.user) {
-      throw new Error('User not found');
-    }
-
-    const { data: existing } = await supabase
+    const { data: existing } = await client
       .from('subscriptions')
       .select('*')
       .eq('user_id', userId)
       .single();
 
     if (existing) {
-      return this.updateSubscription(userId, { topicFilters: dto.topicFilters });
+      return this.updateSubscription(userId, { topicFilters: dto.topicFilters }, accessToken);
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from('subscriptions')
       .insert({
         user_id: userId,
@@ -44,8 +40,9 @@ class SubscriptionsService {
     return this.mapToSubscription(data);
   }
 
-  async getSubscription(userId: string): Promise<Subscription | null> {
-    const { data, error } = await supabase
+  async getSubscription(userId: string, accessToken: string): Promise<Subscription | null> {
+    const client = createAuthenticatedClient(accessToken);
+    const { data, error } = await client
       .from('subscriptions')
       .select('*')
       .eq('user_id', userId)
@@ -58,8 +55,9 @@ class SubscriptionsService {
     return this.mapToSubscription(data);
   }
 
-  async updateSubscription(userId: string, dto: UpdateSubscriptionDto): Promise<Subscription> {
-    const { data, error } = await supabase
+  async updateSubscription(userId: string, dto: UpdateSubscriptionDto, accessToken: string): Promise<Subscription> {
+    const client = createAuthenticatedClient(accessToken);
+    const { data, error } = await client
       .from('subscriptions')
       .update({
         topic_filters: dto.topicFilters,
@@ -79,8 +77,9 @@ class SubscriptionsService {
     return this.mapToSubscription(data);
   }
 
-  async deleteSubscription(userId: string): Promise<void> {
-    const { error } = await supabase
+  async deleteSubscription(userId: string, accessToken: string): Promise<void> {
+    const client = createAuthenticatedClient(accessToken);
+    const { error } = await client
       .from('subscriptions')
       .update({ is_active: false })
       .eq('user_id', userId);

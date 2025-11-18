@@ -6,13 +6,13 @@ import { AuthRequest } from '../shared/middleware/auth.middleware.js';
 export class SubscriptionsController {
   async createSubscription(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.user) {
+      if (!req.user || !req.accessToken) {
         res.status(401).json({ error: 'Unauthorized' });
         return;
       }
 
       const dto = createSubscriptionSchema.parse(req.body);
-      const subscription = await subscriptionsService.createSubscription(req.user.id, dto);
+      const subscription = await subscriptionsService.createSubscription(req.user.id, dto, req.accessToken);
 
       res.status(201).json(subscription);
     } catch (error) {
@@ -22,12 +22,12 @@ export class SubscriptionsController {
 
   async getMySubscription(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.user) {
+      if (!req.user || !req.accessToken) {
         res.status(401).json({ error: 'Unauthorized' });
         return;
       }
 
-      const subscription = await subscriptionsService.getSubscription(req.user.id);
+      const subscription = await subscriptionsService.getSubscription(req.user.id, req.accessToken);
 
       if (!subscription) {
         res.status(404).json({ error: 'Subscription not found' });
@@ -42,13 +42,13 @@ export class SubscriptionsController {
 
   async updateMySubscription(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.user) {
+      if (!req.user || !req.accessToken) {
         res.status(401).json({ error: 'Unauthorized' });
         return;
       }
 
       const dto = updateSubscriptionSchema.parse(req.body);
-      const subscription = await subscriptionsService.updateSubscription(req.user.id, dto);
+      const subscription = await subscriptionsService.updateSubscription(req.user.id, dto, req.accessToken);
 
       res.status(200).json(subscription);
     } catch (error) {
@@ -58,12 +58,12 @@ export class SubscriptionsController {
 
   async deleteMySubscription(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.user) {
+      if (!req.user || !req.accessToken) {
         res.status(401).json({ error: 'Unauthorized' });
         return;
       }
 
-      await subscriptionsService.deleteSubscription(req.user.id);
+      await subscriptionsService.deleteSubscription(req.user.id, req.accessToken);
 
       res.status(200).json({ message: 'Subscription deleted successfully' });
     } catch (error) {
