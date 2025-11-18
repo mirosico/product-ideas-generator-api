@@ -22,8 +22,21 @@ export class AuthService {
       throw new AppError(400, error.message);
     }
 
-    if (!data.user || !data.session) {
-      throw new AppError(400, 'Registration failed');
+    if (!data.user) {
+      throw new AppError(400, 'Registration failed: user not created');
+    }
+
+    if (!data.session) {
+      logger.info('User registered, email confirmation required', { userId: data.user.id, email });
+
+      return {
+        user: {
+          id: data.user.id,
+          email: data.user.email!,
+        },
+        session: null,
+        message: 'Registration successful. Please check your email to confirm your account.',
+      };
     }
 
     logger.info('User registered successfully', { userId: data.user.id, email });

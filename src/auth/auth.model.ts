@@ -23,7 +23,8 @@ export interface AuthResponse {
     access_token: string;
     refresh_token: string;
     expires_at: number;
-  };
+  } | null;
+  message?: string;
 }
 
 export interface UserResponse {

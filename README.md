@@ -151,7 +151,41 @@ supabase db seed
    - 007_create_functions.sql
 4. Run `supabase/seed.sql` for sample data
 
-### 6. Generate Admin API Key (Optional)
+### 6. Configure Supabase Authentication
+
+By default, Supabase requires email confirmation for new users. You have two options:
+
+#### Option A: Disable Email Confirmation (Recommended for Development)
+
+1. Go to [Supabase Dashboard](https://supabase.com/dashboard)
+2. Select your project
+3. Navigate to **Authentication** → **Providers** → **Email**
+4. Scroll down to **Email confirmation**
+5. **Uncheck** "Enable email confirmations"
+6. Click **Save**
+
+Now `POST /api/auth/register` will return a session immediately.
+
+#### Option B: Keep Email Confirmation Enabled (Production)
+
+If email confirmation is enabled:
+- Registration returns `session: null` with a confirmation message
+- Users must click the link in their confirmation email
+- After confirmation, they can login with `POST /api/auth/login`
+
+**Response with email confirmation enabled:**
+```json
+{
+  "user": {
+    "id": "uuid",
+    "email": "user@example.com"
+  },
+  "session": null,
+  "message": "Registration successful. Please check your email to confirm your account."
+}
+```
+
+### 7. Generate Admin API Key (Optional)
 
 If you want to use admin endpoints:
 
@@ -372,6 +406,25 @@ src/
 - [TODO.md](./TODO.md) - Remaining tasks and roadmap
 
 ## Troubleshooting
+
+### Registration Returns Session Null
+
+**Issue**: `POST /api/auth/register` returns `session: null`
+
+**Cause**: Supabase has email confirmation enabled.
+
+**Solution**: Choose one of these options:
+
+1. **Disable email confirmation (Development)**:
+   - Go to Supabase Dashboard → Authentication → Providers → Email
+   - Uncheck "Enable email confirmations"
+   - Save changes
+   - Registration will now return a session immediately
+
+2. **Keep email confirmation (Production)**:
+   - The API will return: `{ user: {...}, session: null, message: "Please check your email..." }`
+   - Users must click the confirmation link in their email
+   - After confirmation, users can login with `POST /api/auth/login`
 
 ### Redis Connection Error
 
