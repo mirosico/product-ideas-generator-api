@@ -62,6 +62,7 @@ class SubscriptionsService {
       .from('subscriptions')
       .update({
         topic_filters: dto.topicFilters,
+        is_active: true,
         updated_at: new Date().toISOString(),
       })
       .eq('user_id', userId)
