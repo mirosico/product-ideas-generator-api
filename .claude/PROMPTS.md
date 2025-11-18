@@ -557,3 +557,88 @@ Looks like deleteMySubscription doesn't work. After deleting I still see subscip
 - Maintains soft delete pattern for audit trail while properly hiding deleted subscriptions
 
 ---
+
+## Prompt 21: Reactivate Subscription on Update
+**Date**: 2025-11-18
+**Context**: Subscription update behavior improvement
+
+**Prompt**:
+```
+Looks like updateSubscription should also set isActive as true. WDYT?
+```
+
+**Result**:
+- Agreed with user's observation
+- Updated updateSubscription to set is_active: true when updating preferences
+- Provides natural reactivation flow for previously deleted subscriptions
+- Benefits:
+  - Users can reactivate by updating their topic filters
+  - Better UX - updating preferences implies wanting emails
+  - Idempotent operation (safe for already active subscriptions)
+  - No need for separate reactivation endpoint
+- Flow now consistent:
+  - CREATE: sets is_active to true
+  - UPDATE: sets is_active to true (reactivates if needed)
+  - DELETE: sets is_active to false
+  - GET: only returns if is_active is true
+
+---
+
+## Prompt 22: Extract Claude Prompts to Separate Files
+**Date**: 2025-11-18
+**Context**: Improve prompt maintainability and organization
+
+**Prompt**:
+```
+In claude.service move prompts templates to separate files
+```
+
+**Result**:
+- Created src/shared/prompts/ directory
+- Extracted idea generation prompt to idea-generation.prompt.ts:
+  - Export buildIdeaGenerationPrompt(redditData: string) function
+  - Contains full prompt template for Claude AI
+- Extracted idea scoring prompt to idea-scoring.prompt.ts:
+  - Export buildIdeaScoringPrompt(idea) function
+  - Contains scoring evaluation template
+- Updated claude.service.ts:
+  - Removed private buildGenerationPrompt and buildScoringPrompt methods
+  - Import and use external prompt functions
+  - Reduced from complex service to focused API integration
+- Benefits:
+  - Better organization: prompts separated from service logic
+  - Easier maintenance: update prompts without touching service
+  - More testable: can test prompts independently
+  - Version control friendly: clearer diffs when prompts change
+  - Prompt engineering: easier to iterate and experiment
+
+---
+
+## Prompt 23: Extract Email Templates to Separate File
+**Date**: 2025-11-18
+**Context**: Improve email template maintainability
+
+**Prompt**:
+```
+Move email template from email.service to separate file
+```
+
+**Result**:
+- Created src/shared/templates/ directory
+- Extracted email templates to ideas-notification.template.ts:
+  - EmailIdea interface definition
+  - buildIdeasEmailHtml(ideas) - HTML email with inline styles
+  - buildIdeasEmailText(ideas) - Plain text version
+- Updated email.service.ts:
+  - Removed buildEmailTemplate and buildPlainTextContent methods
+  - Import template functions and EmailIdea type
+  - Reduced from 124 lines to 57 lines (-54% cleaner)
+  - Now focused solely on email delivery and logging
+- Benefits:
+  - Separation of concerns: templates vs delivery logic
+  - Easier to update: change design without touching service
+  - Better testing: test templates independently
+  - Code reusability: templates can be reused elsewhere
+  - Marketing-friendly: non-developers can update copy more easily
+
+---
