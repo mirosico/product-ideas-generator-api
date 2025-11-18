@@ -19,7 +19,7 @@ export interface AuthResponse {
     id: string;
     email: string;
   };
-  session: {
+  session?: {
     access_token: string;
     refresh_token: string;
     expires_at: number;
